@@ -3,6 +3,9 @@
 var maxtam = 10;
 function create(){
 	var lista = [];
+	for(var i=0;i<maxtam; i++){
+		lista[i]=undefined;
+	}
 	return lista;
 }
 
@@ -24,8 +27,8 @@ function isFull(lista){
 
 function size(lista){
 	var tam=0;
-		for(i=0;i<maxtam;i++){
-			if(!isNan(lista[i])){
+		for(var i=0;i<maxtam;i++){
+			if(!isNaN(lista[i])){
 				tam++;
 			}
 		}
@@ -34,7 +37,7 @@ function size(lista){
 
 function add(lista, elemento){
 	if(!isFull(lista)){
-		if(!isNaN(elemento){
+		if(!isNaN(elemento)){
 			lista[size(lista)] = elemento;
 		}else{
 			throw "El elemento no es un numero";
@@ -47,10 +50,10 @@ function add(lista, elemento){
 
 function addAt(lista, elemento, posicion){
 	if(!isFull(lista)){
-		if(!isNaN(elemento){
+		if(!isNaN(elemento)){
 			if(posicion<size(lista)){
 				var aux;
-				for(i = 0; i<size(lista); i++){
+				for(var i = 0; i<size(lista); i++){
 					if(posicion == i){
 						aux=lista[i];
 						lista[i]=elemento;
@@ -82,7 +85,7 @@ function get(lista, posicion){
 function toString(lista){
 	var cadena = "";
 	if(!isEmpty(lista)){
-		for(i=0;i<size(lista)-1;i++){
+		for(var i=0;i<size(lista)-1;i++){
 			cadena += lista[i] + " - ";
 		}
 		cadena += lista[i];
@@ -92,14 +95,18 @@ function toString(lista){
 
 function indexOf(lista, elemento){
 	if(!isNaN(elemento)){
-		var encontrado=false;
-		for(i=0;i<size(lista) && encontrado; i++){
-			if(lista[i]==elemento){
-				encontrado=true;
-				return i;
-			}else{
-				return -1;
+		var buscando=true;
+		var aux;
+		for(var i=0;i<size(lista) && buscando; i++){
+			if(elemento==lista[i]){
+				buscando=false;
+				aux=i;
 			}
+		}
+		if(buscando==true){
+			return -1;
+		}else{
+			return aux;
 		}
 	} else {
 		throw "El elemento no es un numero";
@@ -108,14 +115,18 @@ function indexOf(lista, elemento){
 
 function lastIndexOf(lista, elemento){
 	if(!isNaN(elemento)){
-		var encontrado=false;
-		for(i=size(lista);i>0 && encontrado; i--){
+		var buscando=true;
+		var aux=size(lista);
+		for(var i=size(lista);i>0 && buscando; i--){
 			if(lista[i]==elemento){
-				encontrado=true;
-				return i;
-			}else{
-				return -1;
+				buscando=false;
+				aux=aux-i-1;
 			}
+		}
+		if(buscando==true){
+			return -1;
+		}else{
+			return aux;
 		}
 	} else {
 		throw "El elemento no es un numero";
@@ -127,7 +138,7 @@ function capacity(lista){
 }
 
 function clear(lista){
-	for(i=0;i<size(lista);i++){
+	for(var i=0;i<size(lista);i++){
 		lista[i]=undefined;
 	}
 }
@@ -151,14 +162,14 @@ function lastElement(lista){
 function remove(lista, posicion){
 	if(posicion<size(lista)){
 		var aux = lista[posicion];
-		for(i = posicion; i<size(lista); i++){		//Recorre la lista
+		for(var i = posicion; i<size(lista); i++){		//Recorre la lista
 			if(i==(size(lista)-1)){					//Si i es el último hueco lo rellena con undefined
 				lista[i]=undefined;
 			}else{									//Si no lo es, le asigna la siguiente posicion
 				lista[i]=lista[i+1];
 			}
 		}	
-	return aux;
+		return aux;
 	} else {
 		throw "Posicion incorrecta";
 	}
@@ -166,11 +177,11 @@ function remove(lista, posicion){
 
 function removeElement(lista, elemento){
 	if(!isNaN(elemento)){
-		var encontrado = false;
-		for(i=0;i<size(lista) && encontrado;i++){
+		var buscando = true;
+		for(var i=0;i<size(lista) && buscando;i++){
 			if(lista[i]==elemento){
-				encontrado=true;
-				for(j = i; j<size(lista); j++){		
+				buscando=false;
+				for(var j = i; j<size(lista); j++){		
 					if(j==(size(lista)-1)){				
 						lista[j]=undefined;
 					}else{									
@@ -179,14 +190,18 @@ function removeElement(lista, elemento){
 				}
 			}
 		}
-		return encontrado;
+		if(buscando==true){
+			return false;
+		}else{
+			return true;
+		}
 	} else {
 		throw "El elemento no es un numero";
 	}
 }
 
 function set(lista, elemento, posicion){
-	if(!isNan(elemento)){
+	if(!isNaN(elemento)){
 		if(posicion<size(lista)){
 			var aux = lista[posicion];
 			lista[posicion]=elemento;
@@ -199,7 +214,7 @@ function set(lista, elemento, posicion){
 	}
 }
 
-funciton testlist(){
+function testlist(){
 	var lista=create();
 	console.log("Capacidad de lista: "+ capacity(lista));
 	console.log("Está vacía: "+isEmpty(lista));
@@ -208,14 +223,17 @@ funciton testlist(){
 	console.log("Añadiendo elemento 17. Tamaño actual: "+add(lista, 17));
 	console.log("Añadiendo elemento 8. Tamaño actual: "+add(lista, 8));
 	console.log("Añadiendo elemento 13. Tamaño actual: "+add(lista, 13));
-	console.log("Añadiendo elemento 5 en la posición 2. Tamaño actual:"+addAt(lista,5,2));
+	console.log("Añadiendo elemento 5 en la posición 2. Tamaño actual: "+addAt(lista,5,2));
 	console.log("Lista completa: "+toString(lista));
-	console.log("Tercer elemento de la lista: "+indexOf(lista));
-	console.log("Tercer elemento de la lista empezando por el final: "+lastIndexOf(lista));
+	console.log("Tercer elemento de la lista: "+get(lista,2));
+	console.log("¿Dónde hay un 13? En la posicion: "+indexOf(lista,13));
+	console.log("¿Y empezando por el final? En la posicion: "+lastIndexOf(lista,13));
 	console.log("Primer elemento de la lista: "+firstElement(lista));
 	console.log("Último elemento de la lista: "+lastElement(lista));
 	console.log("Quitamos el tercer elemento: "+remove(lista,2));
 	console.log("Ahora quitamos el 17: "+removeElement(lista, 17));
-	console.log("Para acabar, cambiamos un 6 por lo que estuviera en la posicion 2 "+set(lista,6,2));
+	console.log("Lista actual: "+toString(lista));
+	console.log("Para acabar, cambiamos un 6 por lo que estuviera en la posicion 1: "+set(lista,6,1));
+	console.log("Lista final: "+toString(lista));
 }
 window.onload = testlist;
