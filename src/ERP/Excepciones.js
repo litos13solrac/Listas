@@ -128,7 +128,7 @@ NoProdException.prototype.constructor = NoProdException;
 //Excepcion Prod ya existe
 function ProdExistException(){
     this.name= "ProductoExistenteException";
-    this.message = "El producto introducida ya existe";
+    this.message = "El producto introducido ya existe";
 }
 ProdExistException.prototype = new BaseException();
 ProdExistException.prototype.constructor = ProdExistException;

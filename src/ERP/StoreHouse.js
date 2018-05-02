@@ -17,7 +17,6 @@ var StoreHouse = (function(){
                 }
             }); 
             
-            var stock = 0;
             
             //Categorias
             var _categorias = []; //array de categorías.
@@ -57,6 +56,11 @@ var StoreHouse = (function(){
                 var pos = getCatPos(cat);
                 if(pos !==-1){
                     if(cat.title !== _defaultCat.title){
+                        var i = 0;
+                        while(cat.prod.length > 0){
+                            this.addProd(cat.prod[i]);
+                            i++;
+                        }
                         _categorias.splice(pos,1);
                     }else{
                         throw new DefCatException(); 
@@ -97,7 +101,7 @@ var StoreHouse = (function(){
 				    return {
 				       next: function(){
 				           return nextIndex < _tiendas.length ?
-				               {value: _tiendas[nextIndex++], done: false} :
+				               {value: _tiendas[nextIndex++].tienda, done: false} :
 				               {done: true};
 				       }
 				    }
@@ -106,17 +110,19 @@ var StoreHouse = (function(){
             
             //Añade Tienda
             this.addTienda = function(tienda){
-                if(!(tienda instanceof Tienda)){
-                    throw new NoTiendaException();
+                if(!(tienda instanceof Tienda)) throw new NoTiendaException();
+                var pos = getTiendaPos(tienda);
+                if(pos === -1){
+                    _tiendas.push(
+                        {
+                            tienda:tienda,
+                            prod:[],
+                            stock:[]
+                        });
                 }else{
-                    var pos = getTiendaPos(tienda);
-                    if(pos === -1){
-                        _tiendas.push(tienda);
-                    }else{
-                        throw new TiendaExistException();
-                    }
-                    return _tiendas.length;
+                    throw new TiendaExistException();
                 }
+                return _tiendas.length;
             }
             
             //Elimina Tienda
@@ -127,7 +133,12 @@ var StoreHouse = (function(){
                     var pos = getTiendaPos(tienda);
                     if(pos !==-1){
                         if(tienda.title !== _defTienda.title){
-                            _tiendas.splice(pos,1);
+                            if(tienda.prod.length == 0){
+                                tiendas.splice(pos,1);
+                            }else{
+                                
+                                tiendas.splice(pos,1);
+                            }
                         }else{
                            throw new DefTiendaException(); 
                         }
@@ -144,7 +155,7 @@ var StoreHouse = (function(){
                     throw new NoTiendaException();
                 }
                 function comparar(elem){
-                    return (elem.CIF === tienda.CIF)
+                    return (elem.tienda.CIF === tienda.CIF)
                 }
                 return _tiendas.findIndex(comparar);
             }
@@ -232,8 +243,10 @@ var StoreHouse = (function(){
             }
             
             //Añadir producto a tienda
-            this.addProductInShop = function(prod, tienda, stock){
-                if (stock === 'undefined' || stock === '' || Number.isNaN(stock)) stock == 1;
+            this.addProductInShop = function(prod, tienda){
+                if(!(prod instanceof Productos)){
+                    throw new NoProdException();
+                }
                 		
 				if (tienda === null || tienda === 'undefined' || tienda === ''){
 					tienda = this.defTienda;
@@ -241,23 +254,42 @@ var StoreHouse = (function(){
 				if (!(tienda instanceof Tienda)) { 
 					throw new TiendaException ();
 				}
-                
                 var tiendaPos = getTiendaPos(tienda);
                 if(tiendaPos === -1){
                     tiendaPos = this.addTienda(tienda)-1;
                 }
                 
-                var prodPos = getProdPos(prod);
+                var prodPos = getProdPos(prod, _tiendas[tiendaPos].prod);
                 if(prodPos === -1){
-                    _tiendas[tiendaPos].prod.push({
-                        prod: prod,
-                        stock: stock
-                    });
+                    _tiendas[tiendaPos].prod.push(prod);
+                    _tiendas[tiendaPos].stock.push(1);
                 }else {
                     throw new ProdExistException();
                 }
                 return _tiendas[tiendaPos].prod.length;
             }
+            
+            //Incrementar el stock de un producto 
+            this.addQuantityProductInShop = function(prod, tienda, stock = 1){
+                if(!(prod instanceof Productos)) throw new NoProdException();		
+                if (!(tienda instanceof Tienda)) throw new NoTiendaException();
+                
+				if (tienda === null || tienda === 'undefined' || tienda === '') tienda = this.defTienda;	
+
+                var tiendaPos = getTiendaPos(tienda);
+                if(tiendaPos === -1){
+                    tiendaPos = this.addTienda(tienda)-1;
+                }
+                
+                var prodPos = getProdPos(prod, _tiendas[tiendaPos].prod);
+                if(prodPos === -1){
+                   throw new ProdNoExistException();
+                }else {
+                    _tiendas[tiendaPos].stock[prodPos] = _tiendas[tiendaPos].stock[prodPos] + stock;
+                }
+                return _tiendas[tiendaPos].stock[prodPos];
+            }
+    
             
             //Devuelve todos los productos de una categoria
             this.getCategoryProducts = function(cat){
@@ -270,10 +302,25 @@ var StoreHouse = (function(){
                     next: function(){
                         return nextIndex < _categorias[catPos].prod.length ? {
                             value: _categorias[catPos].prod[nextIndex++].prod, done:false} : {done:true};
-                        }
                     }
                 }
+            }
             
+            //Devuelve todos los productos de una tienda
+            this.getTiendaProducts = function(shop){
+                if(!(shop instanceof Tienda)) throw new NoTiendaException();
+                
+                var tiendaPos = getTiendaPos(shop);
+                if(shop === -1) throw new TiendaNoExistException();
+                var nextIndex = 0;
+                return {
+                    next: function(){
+                        return nextIndex < _tiendas[tiendaPos].prod.length ? { 
+                            value: _tiendas[tiendaPos].prod[nextIndex++], done:false} : {done:true};
+                    }
+                }
+            }
+
         }       
         StoreHouse.prototype = {};
         StoreHouse.prototype.constructor = StoreHouse;

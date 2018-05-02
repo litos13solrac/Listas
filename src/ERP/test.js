@@ -2,36 +2,33 @@
 
 function test(){
     function testCat(){
-        console.log("---- Probando objeto Categoria ----");
+        console.log("*** Probando objeto Categoria ***");
         console.log("Categoria 1: "+cat1.toString());
         console.log("Categoria 2: "+cat2.toString());
         console.log("Categoria 3: "+cat3.toString());
-        console.log("---- FIN PRUEBA ----")
     }
     
     function testProd(){
-        console.log("---- Probando objetos Producto ----");
+        console.log("*** Probando objetos Producto ***");
         console.log("Objeto 1 Tipo PS4: "+prps4.toString());
         console.log("Objeto 2 Tipo PC: "+prpc.toString());
         console.log("Objeto 3 Tipo Switch: "+prsw.toString());
-        console.log("---- FIN PRUEBA ----");
     }
     
     function testTiend(){
-        console.log("---- Probando objetos Tienda ----");
+        console.log("*** Probando objetos Tienda ***");
         console.log("Tienda 1: "+t1.toString());
         console.log("Tienda 2: "+t2.toString());
         console.log("Tienda 3: "+t3.toString());
-        console.log("---- FIN PRUEBA ----");
     }
     
     function verTiendas(){
         console.log("*** Lista de tiendas ***");
         var tiendas = store.tiendas;
-        var tienda = tiendas.next();
-        while(tienda.done !== true){
-            console.log("Tienda: "+tienda.value.name);
-            tienda = tiendas.next();
+        var shop = tiendas.next();
+        while(shop.done !== true){
+            console.log("Tienda: "+shop.value.name);
+            shop = tiendas.next();
         }
     }
     
@@ -54,21 +51,24 @@ function test(){
     }
     
     function verProdCate(cat){
-        console.log("*-*-* Productos por Categoria: "+ cat.title +" *-*-*");
+        console.log("*** Productos por Categoria: "+ cat.title +" ***");
         verProductos(store.getCategoryProducts(cat));
-        console.log("*-*-* FIN PRODUCTOS *-*-*");
+    }
+    
+    function verProdTienda(shop){
+        console.log("*** Productos por tienda: "+ shop.name + " ***");
+        verProductos(store.getTiendaProducts(shop));
     }
     
     function verTodos(){
-        console.log("### TODOS LOS PRODUCTOS ###");
+        console.log("*** TODOS LOS PRODUCTOS POR CATEGORIAS ***");
         var cat = store.categorias;
         var cate = cat.next();
         while (cate.done !== true){
-            console.log("Categoria: "+cate.value.title);
+            console.log("- Categoria: "+cate.value.title);
             verProductos(store.getCategoryProducts(cate.value));
             cate = cat.next();
         }
-        console.log("### FIN ###");
     }
     
     var cat1 = new Categorias("Plataformas", "Intenta no caer");
@@ -106,6 +106,7 @@ function test(){
     store.addCat(cat3);
     verCategorias();
     
+    console.log("*** Probando a agregar productos ***");
     console.log("Nuevo producto: "+pr1ps4.name+". Total en categoria "+cat3.title+": " + store.addProd(pr1ps4, cat3));
     console.log("Nuevo producto: "+pr2ps4.name+". Total en categoria "+cat2.title+": " + store.addProd(pr2ps4, cat2));
     console.log("Nuevo producto: "+pr1pc.name+". Total en categoria "+cat2.title+": " + store.addProd(pr1pc, cat2));
@@ -114,6 +115,21 @@ function test(){
     console.log("Nuevo producto: "+pr2sw.name+". Total en categoria "+cat3.title+": " + store.addProd(pr2sw, cat3));
     verProdCate(cat3);
     verTodos();
+    
+    console.log("Eliminando categoria "+cat2.name);
+    store.removeCat(cat2);
+    verCategorias();
+    verTodos();
+    
+    console.log("*** Probando a agregar productos a tiendas ***");
+    console.log("Añadir producto "+pr1ps4.name+" a tienda "+t1.name+". Total productos: "+store.addProductInShop(pr1ps4,t1));
+    console.log("Añadir producto "+pr2ps4.name+" a tienda "+t2.name+". Total productos: "+store.addProductInShop(pr2ps4,t2));
+    console.log("Añadir producto "+pr1pc.name+" a tienda "+t2.name+". Total productos: "+store.addProductInShop(pr1pc,t2));
+    console.log("Añadir producto "+pr2pc.name+" a tienda "+t3.name+". Total productos: "+store.addProductInShop(pr2pc,t3));
+    verProdTienda(t2);
+    
+    console.log("*** Aumentando stock ***");
+    console.log("Recibidos 13 "+pr1pc.name+" en tienda "+t2.name+". Stock total: "+store.addQuantityProductInShop(pr1pc,t2,13));
     
     //testCat();
     //testTiend();
