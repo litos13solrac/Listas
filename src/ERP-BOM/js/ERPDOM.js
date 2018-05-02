@@ -227,7 +227,7 @@ function productPopulate(prod, stock, parentNode){
 		parentNode.appendChild(rowDiv1);
 	}
 
-	var store=  StoreHouse.getInstance();
+	var store = StoreHouse.getInstance();
 
 	//Columna1: imagen
 	var colDiv1 = document.createElement("div");
@@ -291,7 +291,6 @@ function productPopulate(prod, stock, parentNode){
     button2.setAttribute("class", "btn");
     button2.appendChild(document.createTextNode("Ficha Técnica"));
     buttonDiv.appendChild(button2);
-
     button2.addEventListener("click",createFunctionAbrirVentana(prod));
 
     var divTab = document.createElement("div");
