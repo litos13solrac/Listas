@@ -393,14 +393,14 @@ var StoreHouse = (function(){
                 //Comprobamos si la tienda existe, si no, genera excepcion.
                 var shopPosition = getShopPosition(shop); 
 				if (shopPosition === -1){
-					throw new ShopDoesntExixtsStoryHouseException();
+					throw new TiendaNoExistException();
                 }
                 
                 //Comprobamos si el producto existe en la tienda, si no, genera excepcion.
                 var productPosition = getProductInShopPosition(product, shop);
                 
                 if(productPosition === -1){
-                   throw new ProductDoesntExixtsStoryHouseException();
+                   throw new ProdNoExistException();
                 }
                 
                 //Añadimos a la tienda el numero de serie del producto y el stock.
@@ -413,7 +413,7 @@ var StoreHouse = (function(){
                 isShop(shop);
 
                 var shopPosition = getShopPosition(shop); 
-                if (shopPosition === -1){ throw new ShopNotExistsStoreHouseException();}
+                if (shopPosition === -1){ throw new TiendaNoExistException();}
 
                 var typeReceived = true;
                 if (type === null || type === undefined || type === ""){

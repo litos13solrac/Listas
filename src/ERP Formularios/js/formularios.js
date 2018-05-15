@@ -12,6 +12,7 @@ function formPopulate(){
         main.appendChild(a);
     }
     
+    var store = StoreHouse.getInstance();
     var main = document.getElementById("main");
     main.setAttribute("class", "container");
     
@@ -24,7 +25,22 @@ function formPopulate(){
     
     p = document.createElement("p");
     p.setAttribute("class", "h3"); 
-    p.appendChild(document.createTextNode("Categorias"));
+    p.appendChild(document.createTextNode("Categorias: "));
+    
+    var selC = document.createElement("select");
+    selC.setAttribute("id", "selCat");
+    p.appendChild(selC);
+
+    var cats = store.categories;
+    var items = cats.next;
+    while(!items.done){
+        var item = items.value;
+        var opt = document.createElement("option");
+        opt.text = item;
+        selC.add(opt);
+
+        items = cats.next();
+    }
     main.appendChild(p);
     
     crearForm("Añadir categoria", addCategoryForm);
@@ -33,7 +49,22 @@ function formPopulate(){
     
     p = document.createElement("p");
     p.setAttribute("class", "h3");
-    p.appendChild(document.createTextNode("Tiendas"));
+    p.appendChild(document.createTextNode("Tiendas: "));
+    
+    var selT = document.createElement("select");
+    selT.setAttribute("id", "selShop");
+    p.appendChild(selT)
+
+    var shop = store.shops;
+    var items = shop.next;
+    while(!items.done){
+        var item = items.value;
+        var opt = document.createElement("option");
+        opt.text = item;
+        selT.add(opt);
+
+        items = shop.next();
+    }
     main.appendChild(p);
     
     crearForm("Añadir tienda", addShopForm);
@@ -42,10 +73,30 @@ function formPopulate(){
 
     p = document.createElement("p");
     p.setAttribute("class", "h3");
-    p.appendChild(document.createTextNode("Productos"));
+    p.appendChild(document.createTextNode("Productos: "));
+    
+    var sel = document.createElement("select");
+    sel.setAttribute("id", "selProd");
+    p.appendChild(sel);
+
+    var prod = store.products;
+    var items = prod.next;
+    while(!items.done){
+        var item = items.value;
+        var opt = document.createElement("option");
+        opt.text = item;
+        sel.add(opt);
+
+        items = prod.next();
+    }
     main.appendChild(p);
+    
+    
+    main.appendChild(p);
+    
     crearForm("Añadir producto", addProForm);
     crearForm("Eliminar producto", delProForm); 
+    //crearForm("Añadir producto existente a tienda", addProShopForm);
 }
 
 function addCategoryForm(){
@@ -54,14 +105,10 @@ function addCategoryForm(){
             var name = document.forms["nuevaCat"]["nomCat"].value;
             var descr = document.forms["nuevaCat"]["descrip"].value;
             var store = StoreHouse.getInstance();
-            if (name == "" || descr == ""){
-                throw new EmptyValueException();
-            }else{
-                var cat = new Category(name);
-                cat.description = descr;
-                store.addCategory(cat);
-                formPopulate();
-            }
+
+            var cat = new Category(name, descr);
+            store.addCategory(cat);
+            formPopulate();
         }
     }
     return function(){
@@ -88,50 +135,56 @@ function addCategoryForm(){
 function updCategoryForm(){
     function updCategory(){
         return function (){
-            var titleId = document.forms["updCat"]["titleId"].value;
-            var title = document.forms["updCat"]["title"].value;
-            var description = document.forms["updCat"]["descr"].value;
-
-             if (title == "" || titleId == ""){
-                  throw new EmptyValueException();
-             } else {
-                    var store = StoreHouse.getInstance();
-                    var cs = store.categories;
-                    var category = cs.next();
-                    var aux = -1;
-
-                  while (category.done !== true){
-                    if (category.value.title === titleId ){
-                        aux = category.value;
-                    }
-                    category = cs.next();
-                  } 
-
-                  if (aux !== -1){
-                        aux.title = title;
-                        aux.description = description;
-                  } else {
-                        throw new CatNoExistException();
-                  }
-             } 
+            var store = StoreHouse.getInstance();
+            var op = document.forms["updCat"]["selCat"].selectedIndex - 1;
+            var tit = document.forms["updCat"]["name"].value;
+            var descr = document.forms["updCat"]["descr"].value;
+            
+            var cats = store.categories;
+            var cate = cats.next();  
+            var count = 0;
+            while(cate.done !== true){
+                if(count == op){
+                    cate.value.title = tit;
+                    cate.value.description = descr;
+                }
+                count++;
+                cate = cats.next();
+            }
+            formPopulate();
         }  
     }
         
         return function (){
             limpiar();
+            var store = StoreHouse.getInstance();
             var main = document.getElementById("main");
             var div = document.createElement("div");
             main.appendChild(div);
-                
             var formulario = document.createElement("form");
             formulario.setAttribute("name", "updCat");
             formulario.setAttribute("class", "form-horizontal");
             
-            var tit = crearInput("Categoria a actualizar", "titleId", "text");
-            formulario.appendChild(tit);
-            var name = crearInput("Nombre", "name", "text");
+            var lab = document.createElement("label");
+            lab.appendChild(document.createTextNode("Seleccione categoria"));
+            formulario.appendChild(lab);
+            var sel = document.createElement("select");
+            sel.setAttribute("id", "selCat");
+            formulario.appendChild(sel);
+            
+            var cats = store.categories;
+            var items = cats.next;
+            while(!items.done){
+                var item = items.value;
+                var opt = document.createElement("option");
+                opt.text = item;
+                sel.add(opt);
+                
+                items = cats.next();
+            }
+            var name = crearInput("Nuevo nombre", "name", "text");
             formulario.appendChild(name);
-            var desc = crearInput("Descripcion","descr","text");
+            var desc = crearInput("Nueva descripcion","descr","text");
             formulario.appendChild(desc);
             var add = crearButton(updCategory(), "Actualizar");
             formulario.appendChild(add);
@@ -145,47 +198,54 @@ function delCategoryForm(){
         function delCategory(){
             return function (){
                 
-                var titleId = document.forms["delCat"]["titleId"].value;
-
-                if (titleId == ""){
-                    throw new EmptyValueException();
-                } else {
-                    var store = StoreHouse.getInstance();
-                    var cs = store.categories;
-                    var category = cs.next();
-                    var aux = -1;
-
-                    while (category.done !== true){
-                        if (category.value.title === titleId ){
-                            aux = category.value;
-                        }
-                        category = cs.next();
-                    } 
-                    if (aux !== -1){
-                        store.removeCategory(aux);
-                    } else {   
-                         throw new CatNoExistException();
-                    }
+            var store = StoreHouse.getInstance();
+            var op = document.forms["delCat"]["selCat"].selectedIndex - 1;
+            
+            var cats = store.categories;
+            var cate = cats.next();  
+            var count = 0;
+            while(cate.done !== true){
+                if(count == op){
+                    store.removeCategory(cate.value);
                 }
+                count++;
+                cate = cats.next();
+            }
+            formPopulate();
             }   
         }
 
         return function (){
-            limpiar();
+           limpiar();
+            var store = StoreHouse.getInstance();
             var main = document.getElementById("main");
             var div = document.createElement("div");
             main.appendChild(div);
-
-            var form = document.createElement("form");
-            form.setAttribute("name", "delCat");
-            form.setAttribute("class", "form-horizontal");
+            var formulario = document.createElement("form");
+            formulario.setAttribute("name", "delCat");
+            formulario.setAttribute("class", "form-horizontal");
             
-            var tit = crearInput("Titulo de la categoria a eliminar", "titleId", "text");
-            form.appendChild(tit);
-            var del = crearButton(delCategory, "Eliminar");
-            form.appendChild(del);
-
-            div.appendChild(form);
+            var lab = document.createElement("label");
+            lab.appendChild(document.createTextNode("Seleccione categoria"));
+            formulario.appendChild(lab);
+            var sel = document.createElement("select");
+            sel.setAttribute("id", "selCat");
+            formulario.appendChild(sel);
+            
+            var cats = store.categories;
+            var items = cats.next;
+            while(!items.done){
+                var item = items.value;
+                var opt = document.createElement("option");
+                opt.text = item;
+                sel.add(opt);
+                
+                items = cats.next();
+            }
+            var add = crearButton(delCategory(), "Eliminar");
+            formulario.appendChild(add);
+                
+            div.appendChild(formulario);
         }
 }
 
@@ -194,15 +254,12 @@ function addShopForm(){
         return function(){
             var cif = document.forms["nuevaShop"]["cifShop"].value;
             var name = document.forms["nuevaShop"]["nomShop"].value;
+            var dir = document.forms["nuevaShop"]["dirShop"].value;
+            var tel = document.forms["nuevaShop"]["telShop"].value;
             var store = StoreHouse.getInstance();
-            if (cif == "" || name == ""){
-                throw new EmptyValueException();
-            }else{
-                var t = new Tienda(cif);
-                t.name = name;
-                store.addShop(t);
-                formPopulate();
-            }
+            var t = new Tienda(cif, name, dir, tel);
+            store.addShop(t);
+            formPopulate();
         }
     }
     return function(){
@@ -219,162 +276,174 @@ function addShopForm(){
         formulario.appendChild(nom);
         var desc = crearInput("Nombre", "nomShop", "text");
         formulario.appendChild(desc);
+        var dir = crearInput("Dirección", "dirShop", "text");
+        formulario.appendChild(dir);
+        var tel = crearInput("Teléfono", "telShop", "number");
+        formulario.appendChild(tel);
         var add = crearButton(insShop(), "Insertar");
         formulario.appendChild(add);
-        
         
         div.appendChild(formulario);
     }
 }
 
 function updShopForm(){
-      function updShop(){
-          return function (){
-                 
-                 var cifId = document.forms["updShop"]["cifId"].value;
-                 var cif = document.forms["updShop"]["CIF"].value;
-                 var name = document.forms["updShop"]["Name"].value;
-                 var direction = document.forms["updShop"]["Direction"].value;
-                 var phone = document.forms["updShop"]["Phone"].value;
+    function actShop(){
+        var store = StoreHouse.getInstance();
+        var op = document.forms["actShop"]["selShop"].selectedIndex - 1;
+        var cif = document.forms["actShop"]["cif"].value;
+        var name = document.forms["actShop"]["name"].value;
+        var dir = document.forms["actShop"]["dir"].value;
+        var tel = document.forms["actShop"]["tel"].value;
 
-                 if (cif == "" || cifId == ""){  
-                      throw new EmptyValueException();
-                 } else {
-                     var store = StoreHouse.getInstance();
-                      var sp = store.shops;
-                      var shop = sp.next();
-                      var aux = -1;
+        var shop = store.shops;
+        var t = shop.next();  
+        var count = 0;
 
-                      while (shop.done !== true){
-                         if (shop.value.cif == cifId ){
-                             aux = shop.value;
-                          }
-                          shop = sp.next();
-                      }
-
-                      if (aux !== -1){
-                            aux.cif = cif;
-                            aux.name = name;
-                            aux.direction = direction;
-                            aux.phone = phone;
-                            formPopulate();
-                      } else {
-                            throw new TiendaNoExistException();
-                      }
-                 } 
-          }  
-    }    
+        while(t.done !== true){
+            if(count == op){
+                t.value.cif = cif;
+                t.value.name = name;
+                t.value.direction = dir;
+                t.value.tel = tel;
+            }
+            count++;
+            t = shop.next();
+        }
+        formPopulate();   
+      }    
         
       return function (){
 
-            limpiar();
-            var main = document.getElementById("main");
-            var div = document.createElement("div");
-            main.appendChild(div);
-                
-            var form = document.createElement("form");
-            form.setAttribute("name", "updShop");
-            form.setAttribute("class", "form-horizontal");
-            
-            var cifAct = crearInput("CIF de la tienda a actualizar", "cifId", "text");
-            form.appendChild(cifAct);
-            var cif = crearInput("CIF", "CIF", "text");
-            form.appendChild(cif);
-            var name = crearInput("Nombre", "Name", "text");
-            form.appendChild(name);
-            var dir = crearInput("Direccion", "Direction", "text"); 
-            form.appendChild(dir);
-            var tel = crearInput("Telefono", "Phone", "text"); 
-            form.appendChild(tel);
-            var upd = crearButton(updShop, "Actualizar");
-            form.appendChild(upd);
-                
-            div.appendChild(form);
-        }  
+        limpiar();
+        var store = StoreHouse.getInstance();
+        var main = document.getElementById("main");
+        var div = document.createElement("div");
+        main.appendChild(div);
+        var formulario = document.createElement("form");
+        formulario.setAttribute("name", "actShop");
+        formulario.setAttribute("class", "form-horizontal");
+
+        var lab = document.createElement("label");
+        lab.appendChild(document.createTextNode("Seleccione tienda"));
+        formulario.appendChild(lab);
+        var sel = document.createElement("select");
+        sel.setAttribute("id", "selShop");
+
+        var shop = store.shops;
+        var items = shop.next;
+        while(!items.done){
+            var item = items.value;
+            var opt = document.createElement("option");
+            opt.text = item;
+            sel.add(opt);
+
+            items = shop.next();
+        }
+
+        formulario.appendChild(sel);
+        var cif = crearInput("Nuevo CIF", "cif", "text");
+        formulario.appendChild(cif);
+        var name = crearInput("Nuevo nombre", "name", "text");
+        formulario.appendChild(name);
+        var dir = crearInput("Nueva direccion", "dir", "text"); 
+        formulario.appendChild(dir);
+        var tel = crearInput("Nuevo telefono", "tel", "number"); 
+        formulario.appendChild(tel);
+        var but = crearButton(actShop, "Actualizar");
+        formulario.appendChild(but);
+
+        div.appendChild(formulario);
+    }  
 }
 
 function delShopForm(){
-        function delShop(){
-            return function (){
-                var cifId = document.forms["delShop"]["cifId"].value;
+    function delShop(){
+        var store = StoreHouse.getInstance();
+        var op = document.forms["delShop"]["selShop"].selectedIndex;
 
-                if (cifId == ""){
-                    throw new EmptyValueException();
-                } else {
-                    var store = StoreHouse.getInstance();
-                    var sp = store.shops;
-                    var shop = sp.next();
-                    var aux = -1;
-
-                    while (shop.done !== true){
-                        if (shop.value.cif == cifId ){
-                            aux = shop.value;
-                        }
-                         shop = sp.next();
-                    }
-
-                    if (aux !== -1){
-                        store.removeShop(aux);
-                        formPopulate();
-                    } else {
-                         throw new TiendaNoExistException();
-                    }
-                }
-            }   
+        var shop = store.shops;
+        var items = shop.next;
+        var count = 0;
+        while(!items.done){
+            if(count == op){
+                store.removeShop(items.value);
+            }
+            count++;
+            items = shop.next();
         }
+        formPopulate();   
+    }
     
-        return function (){
-            limpiar();
-            var main = document.getElementById("main");
-            var div = document.createElement("div");
-            main.appendChild(div);
-                
-            var form = document.createElement("form");
-            form.setAttribute("name", "delShop");
-            form.setAttribute("class", "form-horizontal");
-            
-            var cif = crearInput("CIF de la tienda a eliminar", "cifId");
-            form.appendChild(cif);
-            var del = crearButton(delShop, "Eliminar");
-            form.appendChild(del);
-                
-            div.appendChild(form);
+    return function (){
+        limpiar();
+        var store = StoreHouse.getInstance();
+        var main = document.getElementById("main");
+        var div = document.createElement("div");
+        main.appendChild(div);
+
+        var formulario = document.createElement("form");
+        formulario.setAttribute("name", "delShop");
+        formulario.setAttribute("class", "form-horizontal");
+
+        var lab = document.createElement("label");
+        lab.appendChild(document.createTextNode("Seleccione tienda"));
+        formulario.appendChild(lab);
+        var sel = document.createElement("select");
+        sel.setAttribute("id", "selShop");
+        formulario.appendChild(sel);
+
+        var shop = store.shops;
+        var items = shop.next;
+        while(!items.done){
+            var item = items.value;
+            var opt = document.createElement("option");
+            opt.text = item;
+            sel.add(opt);
+
+            items = shop.next();
         }
+        formulario.appendChild(sel);
+
+        var del = crearButton(delShop, "Eliminar");
+        formulario.appendChild(del);
+
+        div.appendChild(formulario);
+    }
 }
 
 function addProForm(){
-    function insProd(tipo){
-        return function(){
-            var name = document.forms["nuevoProd"]["name"].value;
-            var descr = document.forms["nuevoProd"]["descProd"].value;
-            var price = document.forms["nuevoProd"]["precio"].value;
-            var store = StoreHouse.getInstance();
-            if (name == "" || descr == "" || price == ""){
-                throw new EmptyValueException();
-            }else{
-                switch(tipo){
-                    case "PS4":
-                        var pr = new PS4(name);
-                        pr.description = descr;
-                        pr.price = price;
-                        store.addProduct(pr);
-                    break;
-                    case "PC":
-                        var pr = new PC(name);
-                        pr.description = descr;
-                        pr.price = price;
-                        store.addProduct(pr);
-                    break;
-                    case "NintendoSwitch":
-                        var pr = new Switch(name);
-                        pr.description = descr;
-                        pr.price = price;
-                        store.addProduct(pr);
-                    break;
-                }
+    function insProd(){
+        var name = document.forms["nuevoProd"]["nameProd"].value;
+        var descr = document.forms["nuevoProd"]["descProd"].value;
+        var price = document.forms["nuevoProd"]["precioProd"].value;
+        var img = document.forms["nuevoProd"]["imgProd"].value;
+        var tipo = document.forms["nuevoProd"]["tipoProd"].selectedIndex;
+        var store = StoreHouse.getInstance();
+        if(tipo == 0){
+            var int = document.forms["nuevoProd"]["int"].checked;
+            if(int == true){
+                var inter = "SI";
+            }else {
+                var inter = "NO";
             }
-            formPopulate();
+            var pr = new PS4(name, descr, price, img, inter);
+            store.addProduct(pr);
+        }else if(tipo == 1){
+            var man = document.forms["nuevoProd"]["mando"].checked;
+            if(man == true){
+                var mando = "SI";
+            }else {
+                var mando = "NO";
+            }
+            var pr = new PC(name, descr, price, img, mando);
+            store.addProduct(pr);
+        }else{
+            var num = document.forms["nuevoProd"]["numJ"].value;
+            var pr = new Switch(name, descr, price, img, num);
+            store.addProduct(pr);
         }
+        formPopulate();
     }
     return function(){
         limpiar();
@@ -386,27 +455,36 @@ function addProForm(){
         formulario.setAttribute("id", "nuevoProd");
         formulario.setAttribute("class", "form-horizontal");
         
+        var nom = crearInput("Nombre", "nameProd", "text");
+        formulario.appendChild(nom);
+        var desc = crearInput("Descripcion", "descProd", "text");
+        formulario.appendChild(desc);
+        var price = crearInput("Precio", "precioProd", "number");
+        formulario.appendChild(price);
+        var img = crearInput("Imagen", "imgProd", "file");
+        formulario.appendChild(img);
         
         var tipo = document.createElement("select");
+        tipo.setAttribute("id","tipoProd");
         var op1 = document.createElement("option");
-        op1.text = "PS4";
+        op1.text = "PlayStation 4";
         tipo.add(op1);
         var op2 = document.createElement("option");
         op2.text = "PC";
         tipo.add(op2);
         var op3 = document.createElement("option");
-        op3.text = "NintendoSwitch";
+        op3.text = "Nintendo Switch";
         tipo.add(op3);
+
         formulario.appendChild(tipo);
-        
-        var plat = tipo.value;
-        var nom = crearInput("Nombre", "name", "text");
-        formulario.appendChild(nom);
-        var desc = crearInput("Descripcion", "descProd", "text");
-        formulario.appendChild(desc);
-        var price = crearInput("Precio", "precio", "number");
-        formulario.appendChild(price);
-        var add = crearButton(insProd(plat), "Insertar");
+        var internet = crearInput("¿Requiere Internet? (SOLO PS4)", "int", "checkbox");
+        formulario.appendChild(internet);
+        var mando = crearInput("¿Requiere Mando? (SOLO PC)", "mando", "checkbox");
+        formulario.appendChild(mando);
+        var num = crearInput("Número de jugadores (SOLO SWITCH)", "numJ", "number");
+        formulario.appendChild(num);
+              
+        var add = crearButton(insProd, "Insertar");
         formulario.appendChild(add);
         
         div.appendChild(formulario);
@@ -414,46 +492,153 @@ function addProForm(){
 }
 
 function delProForm(){
-       function delPro(){
-        return function (){
-            function compareElements(element){
-                 return (element.name == serial)
+    function delPro(){
+        var store = StoreHouse.getInstance();
+        var op = document.forms["delProd"]["selProd"].selectedIndex;
+        var prod = store.products;
+        var items = prod.next;
+        var count = 0;
+        while(!items.done){
+            if(count == op){
+                store.removeProduct(items.value);
             }
-
-            var serial = document.forms["delProd"]["name"].value;
-            var store = StoreHouse.getInstance();
-            if (serial == ""){
-                throw new EmptyValueException();
-            } else {
-                
-                index = store.products.findIndex(compareElements);
-
-                if (index != -1){
-                    store.removeProduct(store.products[index]);
-                }else{
-                    throw new ProdNoExistException();
-                }
-            }
-        }   
+            count++;
+            items = prod.next();
+        }
+        formPopulate();   
     }     
     
     return function (){
-            limpiar();
-            var main = document.getElementById("main");
-            var div = document.createElement("div");
-            main.appendChild(div);
-                
-            var form = document.createElement("form");
-            form.setAttribute("name", "delProd");
-            form.setAttribute("class", "form-horizontal");
+        limpiar();
+        var store = StoreHouse.getInstance();
+        var main = document.getElementById("main");
+        var div = document.createElement("div");
+        main.appendChild(div);
+
+        var formulario = document.createElement("form");
+        formulario.setAttribute("name", "delProd");
+        formulario.setAttribute("class", "form-horizontal");
            
-            var prod = crearInput("Nombre del producto a eliminar", "name", "text");
-            form.appendChild(prod);
-            var del = crearButton(delPro, "Eliminar");
-            form.appendChild(del);
-            div.appendChild(form);
+        var lab = document.createElement("label");
+        lab.appendChild(document.createTextNode("Seleccione producto"));
+        formulario.appendChild(lab);
+        var sel = document.createElement("select");
+        sel.setAttribute("id", "selProd");
+        formulario.appendChild(sel);
+
+        var prod = store.products;
+        var items = prod.next;
+        while(!items.done){
+            var item = items.value;
+            var opt = document.createElement("option");
+            opt.text = item;
+            sel.add(opt);
+
+            items = prod.next();
+        }
+        formulario.appendChild(sel);
+
+        var del = crearButton(delPro, "Eliminar");
+        formulario.appendChild(del);
+        div.appendChild(formulario);
       }
 }
+
+/*function addProShopForm(){
+    function addProShop(){
+        var store = StoreHouse.getInstance();
+        var prod = document.forms["ProdShop"]["selProd"].selectedIndex;
+        var shop = document.forms["ProdShop"]["selShop"].selectedIndex;
+        var stock = document.forms["ProdShop"]["cant"].value;
+        
+        var pro = store.products;
+        var items = pro.next;
+        var count = 0;
+        while(!items.done){
+            if(count == prod){
+                var p = items.value;
+            }
+            count++;
+            items = pro.next();
+        }
+        var s = store.shops;
+        var items = s.next;
+        var count2 = 0;
+        while(!items.done){
+            if(count2 == shop){
+                var t = items.value;
+            }
+            count2++;
+            items = s.next();
+        }
+        
+        store.addQuantityProductInShop(p,t,stock);
+        formPopulate();
+    }
+    
+    return function(){
+        limpiar();
+        var store = StoreHouse.getInstance();
+        var main = document.getElementById("main");
+        var div = document.createElement("div");
+        main.appendChild(div);
+
+        var formulario = document.createElement("form");
+        formulario.setAttribute("name", "ProdShop");
+        formulario.setAttribute("class", "form-horizontal");
+           
+        var lab = document.createElement("label");
+        lab.appendChild(document.createTextNode("Seleccione producto: "));
+        formulario.appendChild(lab);
+        var sel = document.createElement("select");
+        sel.setAttribute("id", "selProd");
+
+        var prod = store.products;
+        var items = prod.next;
+        while(!items.done){
+            var item = items.value;
+            var opt = document.createElement("option");
+            opt.text = item;
+            sel.add(opt);
+
+            items = prod.next();
+        }
+        formulario.appendChild(sel);
+        
+        var p = document.createElement("p");
+        p.appendChild(document.createTextNode(""));
+        formulario.appendChild(p);
+        
+        var lab2 = document.createElement("label");
+        lab2.appendChild(document.createTextNode("Seleccione tienda: "));
+        formulario.appendChild(lab2);
+        var sel2 = document.createElement("select");
+        sel2.setAttribute("id", "selShop");
+
+        var shop = store.shops;
+        var items = shop.next;
+        while(!items.done){
+            var item = items.value;
+            var opt = document.createElement("option");
+            opt.text = item;
+            sel2.add(opt);
+
+            items = shop.next();
+        }
+        formulario.appendChild(sel2);
+        
+        var q = document.createElement("p");
+        q.appendChild(document.createTextNode(""));
+        formulario.appendChild(q);
+        
+        var can = crearInput("Cantidad: ", "cant", "number");
+        formulario.appendChild(can);
+        
+        var add = crearButton(addProShop, "Añadir a tienda");
+        formulario.appendChild(add);
+        div.appendChild(formulario);
+    }
+}*/
 
 function crearInput(label, nombre, tipo){
     var div = document.createElement("div");

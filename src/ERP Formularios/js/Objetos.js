@@ -61,8 +61,6 @@ function Product(name, description, price, img, tax){
 			}
 		});
 		}
-
-	
 	Product.prototype = {};
 	Product.prototype.constructor = Product;
 	Object.defineProperty(Product, 'IVA', {
@@ -89,7 +87,7 @@ function PS4 (name, description, price, img, tax, internet){
 PS4.prototype = Object.create(Product.prototype);
 PS4.prototype.constructor = PS4;
 PS4.prototype.toString = function(){
-    return Productos.prototype.toString.call(this) + "Juego de PS4. Requiere Internet: "+this.internet;
+    return this.name + ": Juego de PS4. Requiere Internet: "+this.internet;
 }
 
 
@@ -108,8 +106,8 @@ function PC (name, description, price, img, tax, mando){
 }
 PC.prototype = Object.create(Product.prototype);
 PC.prototype.constructor = PC;
-PS4.prototype.toString = function(){
-    return Productos.prototype.toString.call(this) + "Juego de PC. Requiere mando: "+this.mando;
+PC.prototype.toString = function(){
+    return this.name + ": Juego de PC. Requiere mando: "+this.mando;
 }
 
 function Switch (name, description, price, img, tax, numjugadores){
@@ -128,7 +126,7 @@ function Switch (name, description, price, img, tax, numjugadores){
 Switch.prototype = Object.create(Product.prototype);
 Switch.prototype.constructor = Switch;
 Switch.prototype.toString = function(){
-    return Productos.prototype.toString.call(this) + "Juego de Nintendo Switch. Numero de jugadores: "+this.numjugadores;
+    return this.name + ": Juego de Nintendo Switch. Numero de jugadores: "+this.numjugadores;
 }
 
 //Objeto Categorias
@@ -218,7 +216,8 @@ function Tienda(cif, name, direction, tel){
 
     
     var _cif = validate.empty(cif,"cif");	
-    var _name = validate.empty(name,"name");	
+    var _name = validate.empty(name,"name");
+    var _direction = direction;
     var _tel = tel;
     var _coords = null;
     
@@ -272,7 +271,7 @@ function Tienda(cif, name, direction, tel){
 Tienda.prototype = {};
 Tienda.prototype.constructor = Tienda;
 Tienda.prototype.toString = function(){
-    return "Tienda " + this.CIF + ": " + this.name + " - " + this.direction + " - " + this.tel + " - Coordenadas: " + this.coords;
+    return "Tienda " + this.cif + ": " + this.name + " - " + this.direction + " - " + this.tel + " - Coordenadas: " + this.coords;
 }
 
 var counter = (function (){

@@ -40,7 +40,7 @@ function crear(){
     //Añadimos productos a categorias
     store.addProduct(pr1ps4, cat3);
     store.addProduct(pr2ps4, cat2);
-    store.addProduct(pr1pc, cat2);
+    store.addProduct(pr1pc);
     store.addProduct(pr1sw, cat1);
     store.addProduct(pr2sw, cat3);
     
@@ -444,7 +444,7 @@ function abrirVentana(prod, stock){
 	ventana = window.open("ficha.html",prod.name,"toolbar=yes,scrollbars=yes,resizable=yes,top=100,left=500,width=1000,height=900");
 	windowArray.push(ventana);
 	ventana.focus();
-	setTimeout(function() {
+	setTimeout(function() { //Quitar
 		var winNode = ventana.document.getElementById("main");
 		productPopulate(prod, stock ,winNode);
 	}, 100);
