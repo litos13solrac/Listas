@@ -35,12 +35,14 @@ function formPopulate(){
     var items = cats.next;
     while(!items.done){
         var item = items.value;
-        var opt = document.createElement("option");
-        opt.text = item;
-        selC.add(opt);
-
+        if(item != undefined){
+            var opt = document.createElement("option");
+            opt.text = item;
+            selC.add(opt);
+        }
         items = cats.next();
     }
+
     main.appendChild(p);
     
     crearForm("Añadir categoria", addCategoryForm);
@@ -59,10 +61,11 @@ function formPopulate(){
     var items = shop.next;
     while(!items.done){
         var item = items.value;
-        var opt = document.createElement("option");
-        opt.text = item;
-        selT.add(opt);
-
+        if(item != undefined){
+            var opt = document.createElement("option");
+            opt.text = item;
+            selT.add(opt);
+        }
         items = shop.next();
     }
     main.appendChild(p);
@@ -83,10 +86,11 @@ function formPopulate(){
     var items = prod.next;
     while(!items.done){
         var item = items.value;
-        var opt = document.createElement("option");
-        opt.text = item;
-        sel.add(opt);
-
+        if(item != undefined){
+            var opt = document.createElement("option");
+            opt.text = item;
+            sel.add(opt);
+        }
         items = prod.next();
     }
     main.appendChild(p);
@@ -94,9 +98,9 @@ function formPopulate(){
     
     main.appendChild(p);
     
-    crearForm("Añadir producto", addProForm);
+    crearForm("Nuevo producto", addProForm);
+    crearForm("Añadir producto a tienda", addToShopForm);
     crearForm("Eliminar producto", delProForm); 
-    //crearForm("Añadir producto existente a tienda", addProShopForm);
 }
 
 function addCategoryForm(){
@@ -128,6 +132,8 @@ function addCategoryForm(){
         var add = crearButton(insCat(), "Insertar");
         formulario.appendChild(add);
         
+        var back = crearButton(formPopulate, "Volver");
+        formulario.appendChild(back);
         div.appendChild(formulario);
     }
 }
@@ -136,7 +142,7 @@ function updCategoryForm(){
     function updCategory(){
         return function (){
             var store = StoreHouse.getInstance();
-            var op = document.forms["updCat"]["selCat"].selectedIndex - 1;
+            var op = document.forms["updCat"]["selCat"].selectedIndex;
             var tit = document.forms["updCat"]["name"].value;
             var descr = document.forms["updCat"]["descr"].value;
             
@@ -178,10 +184,11 @@ function updCategoryForm(){
             var items = cats.next;
             while(!items.done){
                 var item = items.value;
-                var opt = document.createElement("option");
-                opt.text = item;
-                sel.add(opt);
-                
+                if(item != undefined){
+                    var opt = document.createElement("option");
+                    opt.text = item;
+                    sel.add(opt);
+                }
                 items = cats.next();
             }
             var name = crearInput("Nuevo nombre", "name", "text");
@@ -191,6 +198,8 @@ function updCategoryForm(){
             var add = crearButton(updCategory(), "Actualizar");
             formulario.appendChild(add);
                 
+            var back = crearButton(formPopulate, "Volver");
+            formulario.appendChild(back);
             div.appendChild(formulario);
         }
 }
@@ -201,7 +210,7 @@ function delCategoryForm(){
         return function (){
                 
             var store = StoreHouse.getInstance();
-            var op = document.forms["delCat"]["selCat"].selectedIndex - 1;
+            var op = document.forms["delCat"]["selCat"].selectedIndex;
             var tit;
             
             var cats = store.categories;
@@ -241,15 +250,18 @@ function delCategoryForm(){
             var items = cats.next;
             while(!items.done){
                 var item = items.value;
-                var opt = document.createElement("option");
-                opt.text = item;
-                sel.add(opt);
-                
+                if(item != undefined){
+                    var opt = document.createElement("option");
+                    opt.text = item;
+                    sel.add(opt);
+                }
                 items = cats.next();
             }
             var add = crearButton(delCategory(), "Eliminar");
             formulario.appendChild(add);
                 
+            var back = crearButton(formPopulate, "Volver");
+            formulario.appendChild(back);
             div.appendChild(formulario);
         }
 }
@@ -288,6 +300,8 @@ function addShopForm(){
         var add = crearButton(insShop(), "Insertar");
         formulario.appendChild(add);
         
+        var back = crearButton(formPopulate, "Volver");
+        formulario.appendChild(back);
         div.appendChild(formulario);
     }
 }
@@ -295,7 +309,7 @@ function addShopForm(){
 function updShopForm(){
     function actShop(){
         var store = StoreHouse.getInstance();
-        var op = document.forms["actShop"]["selShop"].selectedIndex - 1;
+        var op = document.forms["actShop"]["selShop"].selectedIndex;
         var cif = document.forms["actShop"]["cif"].value;
         var name = document.forms["actShop"]["name"].value;
         var dir = document.forms["actShop"]["dir"].value;
@@ -341,10 +355,11 @@ function updShopForm(){
         var items = shop.next;
         while(!items.done){
             var item = items.value;
-            var opt = document.createElement("option");
-            opt.text = item;
-            sel.add(opt);
-
+            if(item != undefined){
+                var opt = document.createElement("option");
+                opt.text = item;
+                sel.add(opt);
+            }
             items = shop.next();
         }
 
@@ -360,6 +375,8 @@ function updShopForm(){
         var but = crearButton(actShop, "Actualizar");
         formulario.appendChild(but);
 
+        var back = crearButton(formPopulate, "Volver");
+        formulario.appendChild(back);
         div.appendChild(formulario);
     }  
 }
@@ -404,10 +421,11 @@ function delShopForm(){
         var items = shop.next;
         while(!items.done){
             var item = items.value;
-            var opt = document.createElement("option");
-            opt.text = item;
-            sel.add(opt);
-
+            if(item != undefined){
+                var opt = document.createElement("option");
+                opt.text = item;
+                sel.add(opt);
+            }
             items = shop.next();
         }
         formulario.appendChild(sel);
@@ -415,6 +433,8 @@ function delShopForm(){
         var del = crearButton(delShop, "Eliminar");
         formulario.appendChild(del);
 
+        var back = crearButton(formPopulate, "Volver");
+        formulario.appendChild(back);
         div.appendChild(formulario);
     }
 }
@@ -425,6 +445,8 @@ function addProForm(){
         var descr = document.forms["nuevoProd"]["descProd"].value;
         var price = document.forms["nuevoProd"]["precioProd"].value;
         var img = document.forms["nuevoProd"]["imgProd"].value;
+        var cat = document.forms["nuevoProd"]["selCat"].selectedIndex;
+        var categoria = getCat(cat);
         var tipo = document.forms["nuevoProd"]["tipoProd"].selectedIndex;
         var store = StoreHouse.getInstance();
         if(tipo == 0){
@@ -435,7 +457,7 @@ function addProForm(){
                 var inter = "NO";
             }
             var pr = new PS4(name, descr, price, img, inter);
-            store.addProduct(pr);
+            store.addProduct(pr, categoria);
         }else if(tipo == 1){
             var man = document.forms["nuevoProd"]["mando"].checked;
             if(man == true){
@@ -444,11 +466,11 @@ function addProForm(){
                 var mando = "NO";
             }
             var pr = new PC(name, descr, price, img, mando);
-            store.addProduct(pr);
+            store.addProduct(pr, categoria);
         }else{
             var num = document.forms["nuevoProd"]["numJ"].value;
             var pr = new Switch(name, descr, price, img, num);
-            store.addProduct(pr);
+            store.addProduct(pr, categoria);
         }
         formPopulate();
     }
@@ -470,6 +492,31 @@ function addProForm(){
         formulario.appendChild(price);
         var img = crearInput("Imagen", "imgProd", "file");
         formulario.appendChild(img);
+        
+        var lab = document.createElement("label");
+        lab.appendChild(document.createTextNode("Categoria:"));
+        formulario.appendChild(lab);
+        
+        var sel = document.createElement("select");
+        sel.setAttribute("id", "selCat");
+        
+        var store = StoreHouse.getInstance();
+        var cats = store.categories;
+        var items = cats.next;
+        
+        while(!items.done){
+            var item = items.value;
+            if(item != undefined){
+                var opt = document.createElement("option");
+                opt.text = item;
+                sel.add(opt);
+            }
+            items = cats.next();
+        }
+        
+        formulario.appendChild(sel);
+        var p = document.createElement(p);
+        formulario.appendChild(p);
         
         var tipo = document.createElement("select");
         tipo.setAttribute("id","tipoProd");
@@ -494,8 +541,81 @@ function addProForm(){
         var add = crearButton(insProd, "Insertar");
         formulario.appendChild(add);
         
+        var back = crearButton(formPopulate, "Volver");
+        formulario.appendChild(back);
         div.appendChild(formulario);
     }
+}
+
+
+function addToShopForm(){
+    function addToShop(){
+        var s = document.forms["ProdShop"]["selShop"].selectedIndex;
+        var shop = getShop(s);
+        var p = document.forms["ProdShop"]["selProd"].selectedIndex;
+        var prod = getProd(p);
+        var store = StoreHouse.getInstance();
+        store.addProductInShop(prod,shop);
+        formPopulate();
+    }
+    return function (){
+        limpiar();
+        var store = StoreHouse.getInstance();
+        var main = document.getElementById("main");
+        var div = document.createElement("div");
+        main.appendChild(div);
+
+        var formulario = document.createElement("form");
+        formulario.setAttribute("name", "ProdShop");
+        formulario.setAttribute("class", "form-horizontal");
+           
+        var lab = document.createElement("p");
+        lab.appendChild(document.createTextNode("Seleccione producto:"));
+        formulario.appendChild(lab);
+        var selP = document.createElement("select");
+        selP.setAttribute("id", "selProd");
+        formulario.appendChild(selP);
+
+        var prod = store.products;
+        var items = prod.next;
+        while(!items.done){
+            var item = items.value;
+            if(item != undefined){
+                var opt = document.createElement("option");
+                opt.text = item;
+                selP.add(opt);
+            }
+            items = prod.next();
+        }
+        
+        var labT = document.createElement("p");
+        labT.appendChild(document.createTextNode("Seleccione tienda:"));
+        formulario.appendChild(labT);
+        var selT = document.createElement("select");
+        selT.setAttribute("id", "selShop");
+        formulario.appendChild(selT);
+
+        var shop = store.shops;
+        var items = shop.next;
+        while(!items.done){
+            var item = items.value;
+            if(item != undefined){
+                var opt = document.createElement("option");
+                opt.text = item;
+                selT.add(opt);
+            }
+            items = shop.next();
+        }
+        var esp = document.createElement("p");
+        esp.appendChild(document.createTextNode(" "));
+        formulario.appendChild(esp);
+        var del = crearButton(addToShop, "Añadir");
+        formulario.appendChild(del);
+        
+        var back = crearButton(formPopulate, "Volver");
+        formulario.appendChild(back);
+        div.appendChild(formulario);
+      }
 }
 
 function delProForm(){
@@ -527,7 +647,7 @@ function delProForm(){
         formulario.setAttribute("class", "form-horizontal");
            
         var lab = document.createElement("label");
-        lab.appendChild(document.createTextNode("Seleccione producto"));
+        lab.appendChild(document.createTextNode("Seleccione producto: "));
         formulario.appendChild(lab);
         var sel = document.createElement("select");
         sel.setAttribute("id", "selProd");
@@ -537,115 +657,23 @@ function delProForm(){
         var items = prod.next;
         while(!items.done){
             var item = items.value;
-            var opt = document.createElement("option");
-            opt.text = item;
-            sel.add(opt);
-
+            if(item != undefined){
+                var opt = document.createElement("option");
+                opt.text = item;
+                sel.add(opt);
+            }
             items = prod.next();
         }
         formulario.appendChild(sel);
 
         var del = crearButton(delPro, "Eliminar");
         formulario.appendChild(del);
+        
+        var back = crearButton(formPopulate, "Volver");
+        formulario.appendChild(back);
         div.appendChild(formulario);
       }
 }
-
-/*function addProShopForm(){
-    function addProShop(){
-        var store = StoreHouse.getInstance();
-        var prod = document.forms["ProdShop"]["selProd"].selectedIndex;
-        var shop = document.forms["ProdShop"]["selShop"].selectedIndex;
-        var stock = document.forms["ProdShop"]["cant"].value;
-        
-        var pro = store.products;
-        var items = pro.next;
-        var count = 0;
-        while(!items.done){
-            if(count == prod){
-                var p = items.value;
-            }
-            count++;
-            items = pro.next();
-        }
-        var s = store.shops;
-        var items = s.next;
-        var count2 = 0;
-        while(!items.done){
-            if(count2 == shop){
-                var t = items.value;
-            }
-            count2++;
-            items = s.next();
-        }
-        
-        store.addQuantityProductInShop(p,t,stock);
-        formPopulate();
-    }
-    
-    return function(){
-        limpiar();
-        var store = StoreHouse.getInstance();
-        var main = document.getElementById("main");
-        var div = document.createElement("div");
-        main.appendChild(div);
-
-        var formulario = document.createElement("form");
-        formulario.setAttribute("name", "ProdShop");
-        formulario.setAttribute("class", "form-horizontal");
-           
-        var lab = document.createElement("label");
-        lab.appendChild(document.createTextNode("Seleccione producto: "));
-        formulario.appendChild(lab);
-        var sel = document.createElement("select");
-        sel.setAttribute("id", "selProd");
-
-        var prod = store.products;
-        var items = prod.next;
-        while(!items.done){
-            var item = items.value;
-            var opt = document.createElement("option");
-            opt.text = item;
-            sel.add(opt);
-
-            items = prod.next();
-        }
-        formulario.appendChild(sel);
-        
-        var p = document.createElement("p");
-        p.appendChild(document.createTextNode(""));
-        formulario.appendChild(p);
-        
-        var lab2 = document.createElement("label");
-        lab2.appendChild(document.createTextNode("Seleccione tienda: "));
-        formulario.appendChild(lab2);
-        var sel2 = document.createElement("select");
-        sel2.setAttribute("id", "selShop");
-
-        var shop = store.shops;
-        var items = shop.next;
-        while(!items.done){
-            var item = items.value;
-            var opt = document.createElement("option");
-            opt.text = item;
-            sel2.add(opt);
-
-            items = shop.next();
-        }
-        formulario.appendChild(sel2);
-        
-        var q = document.createElement("p");
-        q.appendChild(document.createTextNode(""));
-        formulario.appendChild(q);
-        
-        var can = crearInput("Cantidad: ", "cant", "number");
-        formulario.appendChild(can);
-        
-        var add = crearButton(addProShop, "Añadir a tienda");
-        formulario.appendChild(add);
-        div.appendChild(formulario);
-    }
-}*/
 
 function crearInput(label, nombre, tipo){
     var div = document.createElement("div");
@@ -686,4 +714,44 @@ function cerrarSesion(){
     document.getElementById("Acceso").innerHTML = "Acceso";
     document.getElementById("Acceso").setAttribute("onclick", "formAcceso();")
     initPopulate();
+}
+
+function getCat(index){
+    var store = StoreHouse.getInstance();
+    var cat = store.categories;
+    var cate = cat.next();
+    var count = 0;
+    while(!cate.done){
+        if(count == index){
+            return cate.value;
+        }
+        cate = cat.next();
+        count++;
+    }
+}
+function getShop(index){
+    var store = StoreHouse.getInstance();
+    var shop = store.shops;
+    var t = shop.next();
+    var count = 0;
+    while(!t.done){
+        if(count == index){
+            return t.value;
+        }
+        t = shop.next();
+        count++;
+    }
+}
+function getProd(index){
+    var store = StoreHouse.getInstance();
+    var prod = store.products;
+    var pro = prod.next();
+    var count = 0;
+    while(!pro.done){
+        if(count == index){
+            return pro.value;
+        }
+        pro = prod.next();
+        count++;
+    }
 }

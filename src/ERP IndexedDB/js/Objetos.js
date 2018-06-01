@@ -95,7 +95,7 @@ function PS4 (name, description, price, img, tax, internet){
 PS4.prototype = Object.create(Product.prototype);
 PS4.prototype.constructor = PS4;
 PS4.prototype.toString = function(){
-    return this.name + ": Juego de PS4. Requiere Internet: "+this.internet;
+    return "PS4: " + this.name;
 }
 
 
@@ -115,7 +115,7 @@ function PC (name, description, price, img, tax, mando){
 PC.prototype = Object.create(Product.prototype);
 PC.prototype.constructor = PC;
 PC.prototype.toString = function(){
-    return this.name + ": Juego de PC. Requiere mando: "+this.mando;
+    return "PC: " + this.name;
 }
 
 function Switch (name, description, price, img, tax, numjugadores){
@@ -134,7 +134,7 @@ function Switch (name, description, price, img, tax, numjugadores){
 Switch.prototype = Object.create(Product.prototype);
 Switch.prototype.constructor = Switch;
 Switch.prototype.toString = function(){
-    return this.name + ": Juego de Nintendo Switch. Numero de jugadores: "+this.numjugadores;
+    return "Nintendo Switch: " + this.name;
 }
 
 //Objeto Categorias
@@ -168,11 +168,11 @@ Category.prototype.constructor = Category;
 Category.prototype.getObject = function(){
 	return{
 		title: this.title,
-		descripcion: this.descripcion
+		descripcion: this.description
 	};
 }
 Category.prototype.toString = function(){
-    return this.title +": "+ this.description;
+    return this.title;
 }
 
 
@@ -293,7 +293,7 @@ Tienda.prototype.getObject = function(){
 	};
 }
 Tienda.prototype.toString = function(){
-    return "Tienda " + this.cif + ": " + this.name + " - " + this.direction + " - " + this.tel + " - Coordenadas: " + this.coords;
+    return this.cif + ": " + this.name;
 }
 
 var counter = (function (){
