@@ -1,0 +1,70 @@
+var datos = {
+    "categories":[
+        {
+            "title": "Plataformas",
+            "description": "Intenta no caer"
+        },{
+            "title": "Lucha",
+            "description": "Derrota a tus enemigos"
+        },{
+            "title":"Deportes",
+            "description": "Conviertete en el mejor"
+        }
+    ],
+    "products":[
+        {
+            "name":"NBA2k18",
+            "description":"Juego de Baloncesto",
+            "price":60,
+            "tax":0.21,
+            "image":["imagenes/nba.jpg"],
+            "internet":"SI"
+        },{
+            "name":"Tekken7",
+            "description":"Combates en 2D",
+            "price":70,
+            "tax":0.21,
+            "image":["imagenes/tekken.jpg"],
+            "internet":"SI"
+        },{
+            "name":"DragonBallFighterZ",
+            "description":"Juego de Lucha",
+            "price":45,
+            "tax":0.21,
+            "image":["imagenes/dbz.jpg"],
+            "mando":"SI"
+        },{
+            "name":"SuperMarioOddisey",
+            "description":"Juego de plataformas",
+            "price":50,
+            "tax":0.21,
+            "image":["imagenes/mario.jpg"],
+            "num":2
+        },{
+            "name":"FIFA18",
+            "description":"Juego de Futbol",
+            "price":49,
+            "tax":0.21,
+            "image":["imagenes/fifa.jpg"],
+            "num":2
+        }               
+    ],
+    "shops":[
+        {
+            "cif":"T1",
+            "name":"Juegomania",
+            "direction":"Avenida Magica, 7",
+            "tel":"666555321"
+        },{
+            "cif":"T2",
+            "name":"Villagaming",
+            "direction":"Calle de la Piruleta, 22",
+            "tel":"926303030"
+        },{
+            "cif":"T3",
+            "name":"Alimentacion",
+            "direction":"Paseo Juanola",
+            "tel":"666458555"
+        }
+    ]
+};
