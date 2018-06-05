@@ -1,0 +1,21 @@
+[
+    {
+        "cif":"T1",
+        "name":"Juegomania",
+        "direction":"Avenida Magica, 7",
+        "tel":"666555321",
+        "coords": "38.989258, -3.924238"
+    },{
+        "cif":"T2",
+        "name":"Villagaming",
+        "direction":"Calle de la Piruleta, 22",
+        "tel":"926303030",
+        "coords": "38.993082, -3.927354"
+    },{
+        "cif":"T3",
+        "name":"Alimentacion",
+        "direction":"Paseo Juanola",
+        "tel":"666458555",
+        "coords": "38.993069, -3.919836"
+    }
+]
