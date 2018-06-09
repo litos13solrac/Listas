@@ -1,0 +1,48 @@
+[
+    {
+        "name":"NBA2k18",
+        "description":"Juego de Baloncesto",
+        "price":60,
+        "image":["../imagenes/nba.jpg"],
+        "tax":0.21,
+        "cat": "Deportes",
+        "tipo":"PS4",
+        "internet":"SI"
+    },{
+        "name":"Tekken7",
+        "description":"Combates en 2D",
+        "price":70,
+        "image":["../imagenes/tekken.jpg"],
+        "tax":0.21,
+        "cat": "Lucha",
+        "tipo":"PS4",
+        "internet":"SI"
+    },{
+        "name":"DragonBallFighterZ",
+        "description":"Juego de Lucha",
+        "price":45,
+        "image":["../imagenes/dbz.jpg"],
+        "tax":0.21,
+        "cat": "Lucha",
+        "tipo":"PC",
+        "mando":"SI"
+    },{
+        "name":"SuperMarioOddisey",
+        "description":"Juego de plataformas",
+        "price":50,
+        "image":["../imagenes/mario.jpg"],
+        "tax":0.21,
+        "cat": "Plataformas",
+        "tipo":"NS",
+        "num":2
+    },{
+        "name":"FIFA18",
+        "description":"Juego de Futbol",
+        "price":49,
+        "image":["../imagenes/fifa.jpg"],
+        "tax":0.21,
+        "cat": "Deportes",
+        "tipo":"NS",
+        "num":2
+    }               
+]
